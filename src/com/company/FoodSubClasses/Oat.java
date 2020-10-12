@@ -1,12 +1,13 @@
-package com.company;
+package com.company.FoodSubClasses;
 
-public class Oat extends Food{
-    public int initialPrice = 200;
-    public int totalQuantity = 0;
+import com.company.Food;
+
+public class Oat extends Food {
     public int buyQuantity = 0;
 
     public Oat(String foodType,int quantity){
         super(foodType);
+        initialPrice = 80;
         this.totalQuantity += quantity;
         this.buyQuantity = quantity;
     }
@@ -16,15 +17,18 @@ public class Oat extends Food{
 
     public void printField(){
         super.printField();
-        System.out.println("Quantity: " + totalQuantity);
+        System.out.println("Quantity: " + totalQuantity + " KG");
     }
 
-    public int getTotalQuantity(){
+    public double getTotalQuantity(){
         return totalQuantity;
     }
 
-    public void updateQuantity(int quantity){
+    public void updateQuantity(double quantity){
         this.totalQuantity += quantity;
+    }
+    public void minusQuantity(double quantity){
+        this.totalQuantity -= quantity;
     }
 
 }

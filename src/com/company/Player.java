@@ -16,6 +16,14 @@ public class Player {
         animals.add(animal);
     }
 
+    public void addFood(Food food){
+        foods.add(food);
+    }
+
+    public void removeFood(Food food){
+        foods.remove(food);
+    }
+
     public void updateBalance(int balance){
         this.balance = balance;
     }
