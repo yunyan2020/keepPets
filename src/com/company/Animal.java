@@ -10,7 +10,8 @@ public abstract class Animal {
     public double totalFeedQuantity;
     public int lostHealth;
     public int addedHealth;
-    private boolean isAlive;
+    public int breedQuantity;
+    public boolean isAlive;
 
     public Animal(String name,String gender){
         this.name = name;
@@ -26,10 +27,20 @@ public abstract class Animal {
 
     public abstract boolean isLiving();
 
-    public abstract void breed(Animal animal);
+    public static Animal breed(String gender) {
+        return null;
+    }
 
     public String getName(){
         return name;
+    }
+
+    public String getGender(){
+        return String.valueOf(gender);
+    }
+
+    public int getBreedQuantity(){
+        return breedQuantity;
     }
 
     public void printField(){

@@ -3,12 +3,16 @@ package com.company.AnimalSubClasses;
 import com.company.Animal;
 import com.company.Food;
 
+import java.util.Scanner;
+
 public class Chicken extends Animal {
 
     public Chicken(String name,String gender){
         super(name,gender);
         initialPrice = 200;
         healthGrowthRef = 0.3;
+        breedQuantity = 8;
+        isAlive = true;
         editableFood = new String[] {"Beef","Grass","Corn"};
     }
 
@@ -40,22 +44,30 @@ public class Chicken extends Animal {
 
     public void lostHealth(){
         //Produce the random number between 10 - 30
-        //int num = min + (int)(Math.random() * (max-min+1));
-        int randomNum  = 10 + (int)(Math.random() * 21);
-        lostHealth = randomNum;
+        //randomNum = min + (int)(Math.random() * (max-min+1));
+        lostHealth =  10 + (int)(Math.random() * (30-20+1));
         this.healthPercent = Math.max(this.healthPercent -lostHealth,0);
     }
 
     public void die(){
-
+        if (this.healthPercent <= 0) {
+            this.isAlive = false;
+        }
     }
 
     public boolean isLiving(){
-        return true;
+        return this.isAlive;
     }
 
-    public void breed(Animal animal){
+    public int getBreedQuantity(){
+        return breedQuantity;
+    }
 
+    public static Animal breed(String gender){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("It is a new baby.What is the baby animals name:");
+        var animalName = scanner.nextLine();
+        return (new Dog(animalName,gender));
     }
 
 }

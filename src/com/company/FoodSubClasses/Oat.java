@@ -3,7 +3,7 @@ package com.company.FoodSubClasses;
 import com.company.Food;
 
 public class Oat extends Food {
-    public int buyQuantity = 0;
+    public int buyQuantity ;
 
     public Oat(String foodType,int quantity){
         super(foodType);
