@@ -13,7 +13,7 @@ public class Dog extends Animal {
      healthGrowthRef = 1.0;
      breedQuantity = 2;
      isAlive = true;
-     editableFood = new String[] {"Beef","Corn","Oat","Milk"};
+     editableFood = new String[] {"Beef","Corn","Oat"};
     }
 
     public int checkBalance(int balance){
@@ -23,7 +23,10 @@ public class Dog extends Animal {
     public void printField(){
         super.printField();
         System.out.println("Health Value: " + healthPercent
-                + " Lost Health last round: " + lostHealth + " Added Health by feed:" + addedHealth);
+                + " Lost Health last round: " + lostHealth
+                + " Added Health by feed:" + addedHealth
+                + " Initial Price: " + initialPrice
+                + " Normal Breed quantity: " + breedQuantity );
     }
 
     public void eat(Food food, double quantity){
@@ -62,6 +65,10 @@ public class Dog extends Animal {
     public int getBreedQuantity(){
         return breedQuantity;
     }
+
+    public int getHealthPercent(){return healthPercent;}
+
+    public int getInitialPrice(){return initialPrice;}
 
     public static Animal breed(String gender){
         Scanner scanner = new Scanner(System.in);

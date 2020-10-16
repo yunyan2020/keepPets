@@ -28,4 +28,11 @@ public class Player {
         this.balance = balance;
     }
 
+    public void increaseBalance(int balance){
+        this.balance += balance;
+    }
+    public void removeAnimal(Animal animal){
+        animals.remove(animal);
+    }
+
 }

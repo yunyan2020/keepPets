@@ -22,7 +22,10 @@ public class Cat extends Animal {
     public void printField(){
         super.printField();
         System.out.println("Health Value: " + healthPercent
-                + " Lost Health last round: " + lostHealth + " Added Health by feed:" + addedHealth);
+                + " Lost Health last round: " + lostHealth
+                + " Added Health by feed:" + addedHealth
+                + " Initial Price: " + initialPrice
+                + " Normal Breed quantity: " + breedQuantity );
     }
 
     public void eat(Food food, double quantity){
@@ -62,11 +65,15 @@ public class Cat extends Animal {
         return breedQuantity;
     }
 
+    public int getHealthPercent(){return healthPercent;}
+
+    public int getInitialPrice(){return initialPrice;}
+
     public static Animal breed(String gender){
         Scanner scanner = new Scanner(System.in);
         System.out.println("It is a new baby.What is the baby animals name:");
         var animalName = scanner.nextLine();
-        return (new Dog(animalName,gender));
+        return (new Cat(animalName,gender));
     }
 
 }

@@ -12,15 +12,32 @@ public class CheckInput {
         return string.matches("[\\+\\-]?\\d*(\\.\\d+)?([eE][\\+\\-]?\\d+)?");
     }
 
-    public static boolean isAnimalNameExist(Player player,String animalName){
+    public static boolean isAnimalNameExist(Player player,String animalType,String animalName){
         List<String> animalNameList = new ArrayList<>();
         for(var animal:player.animals){
-            animalNameList.add(animal.getName());
+            if (animal.getClass().getSimpleName().equals(animalType)){
+                animalNameList.add(animal.getName());
+            }
         }
+        if (animalNameList.contains(animalName)){
+            System.out.printf("The name:%s has existed \n",animalName );
+            return true;
+        }
+       return false;
+    }
+
+    public static boolean isAnimalNameNotExist(Player player,String animalType,String animalName){
+        List<String> animalNameList = new ArrayList<>();
+        for(var animal:player.animals){
+            if (animal.getClass().getSimpleName().equals(animalType)){
+                animalNameList.add(animal.getName());
+            }
+        }
+
         if (!animalNameList.contains(animalName)){
             System.out.printf("The name:%s does not exist \n",animalName );
-            return false;
+            return true;
         }
-       return true;
+        return false;
     }
 }

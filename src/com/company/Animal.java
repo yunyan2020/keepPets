@@ -43,6 +43,11 @@ public abstract class Animal {
         return breedQuantity;
     }
 
+    public int getHealthPercent(){return healthPercent;}
+
+    public int getInitialPrice(){return initialPrice;}
+
+
     public void printField(){
         System.out.print("Name: " + name +" Gender: " + gender + " ");
     }

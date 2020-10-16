@@ -8,17 +8,20 @@ public class Store {
 
     static Scanner scanner = new Scanner(System.in);
 
-    public static Animal buyAnimal(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("What kind of animal would you want to buy?");
-        System.out.println("1:Dog 2:Horse 3:Cat 4:Chicken 5:Rabbit");
-        var choice = scanner.nextLine();
-        while(!Arrays.asList("1","2","3","4","5").contains(choice)){
-            System.out.println("Input error,please input again");
-            choice = scanner.nextLine();
-        }
+    public static Animal buyAnimal(Player player){
+        //Ask the user input Animal Type
+        var animalType = Dialogs.askAnimalType();
         System.out.println("What is your animals name:");
         var animalName = scanner.nextLine();
+        //Check if the animal name exist in the players animal list
+        var nameExist = CheckInput.isAnimalNameExist(player,animalType,animalName);
+        while (nameExist){
+            System.out.println("What is your animals name:");
+            animalName = scanner.nextLine();
+            nameExist = CheckInput.isAnimalNameExist(player,animalType,animalName);
+
+        }
+
         System.out.println("What is your animals gender(M/F):");
         var animalGender = scanner.nextLine();
         if (animalGender.toUpperCase().equals("M")){
@@ -30,34 +33,34 @@ public class Store {
         else {
             animalGender = "NONBINARY";
         }
-        return switch (choice){
-            case "1"    -> (new Dog(animalName,animalGender));
-            case "2"    -> (new Horse(animalName,animalGender));
-            case "3"    -> (new Cat(animalName,animalGender));
-            case "4"    -> (new Chicken(animalName,animalGender));
-            case "5"    -> (new Rabbit(animalName,animalGender));
+        return switch (animalType){
+            case "Dog"      -> (new Dog(animalName,animalGender));
+            case "Horse"    -> (new Horse(animalName,animalGender));
+            case "Cat"      -> (new Cat(animalName,animalGender));
+            case "Chicken"  -> (new Chicken(animalName,animalGender));
+            case "Rabbit"   -> (new Rabbit(animalName,animalGender));
             default     -> null;
         };
     }
 
     public static Food buyFood(){
         Scanner scanner = new Scanner(System.in);
-        System.out.println("What kind of food would you want to buy?");
-        System.out.println("1:Beef 2:Milk 3:Grass 4:Corn 5:Oat");
-        var choice = scanner.nextLine();
+        //Ask the user input Animal Type
+        var foodType = Dialogs.askFoodType();
         System.out.println("How many food would you want to buy(unit:KG):");
         while (!scanner.hasNextInt()) {
             scanner.nextLine();
         }
         var buyQuantity = scanner.nextInt();
-        return switch (choice){
-                case "1"    -> (new Beef("Beef",buyQuantity));
-                case "2"    -> (new Milk("Milk",buyQuantity));
-                case "3"    -> (new Grass("Grass",buyQuantity));
-                case "4"    -> (new Corn("Corn",buyQuantity));
-                case "5"    -> (new Oat("Oat",buyQuantity));
+        return switch (foodType){
+                case "Beef"    -> (new Beef("Beef",buyQuantity));
+                case "Milk"    -> (new Milk("Milk",buyQuantity));
+                case "Grass"    -> (new Grass("Grass",buyQuantity));
+                case "Corn"    -> (new Corn("Corn",buyQuantity));
+                case "Oat"    -> (new Oat("Oat",buyQuantity));
                 default     -> null;
             };
-        }
-
     }
+
+
+}
