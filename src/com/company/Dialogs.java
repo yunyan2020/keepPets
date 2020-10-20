@@ -1,5 +1,7 @@
 package com.company;
 
+import com.company.AnimalSubClasses.*;
+
 import java.util.*;
 
 public class Dialogs {
@@ -22,7 +24,6 @@ public class Dialogs {
             case "5" -> animalType = "Rabbit";
             default -> animalType = "";
         }
-        ;
         return animalType;
     }
 
@@ -44,8 +45,59 @@ public class Dialogs {
             case "5" -> foodType = "Oat";
             default -> foodType = "";
         }
-        ;
         return foodType;
+    }
+
+    public static void askRescueAnimal(Player player){
+        Scanner scanner = new Scanner(System.in);
+        var haveSickAnimal = false;
+        if (player.animals.size() > 0 ){
+            for (var animal: player.animals) {
+                var animalType = animal.getClass().getSimpleName();
+                var healthStatus = animal.healthStatus;
+                var veterinaryCost = animal.veterinaryCost;
+                if (healthStatus.equals("Sick")){
+                    haveSickAnimal = true;
+                    System.out.printf("Do you want to rescue your animal: %s(y/n)? It will cost: %d \n",
+                            animal.getName(),animal.veterinaryCost);
+                    var rescue = (scanner.next()).toUpperCase().equals("Y");
+                    //judge the play have enough money to rescue
+                    if (player.balance < veterinaryCost) {
+                        System.out.println("You don´t have enough money to recuse it");
+                        veterinaryCost = 0;
+                        healthStatus = "Death";
+                    }
+                    if (rescue){
+                        var rd = Math.random()>0.5?1:0;
+                        healthStatus = (rd == 1?"Health":"Death");
+                        player.reduceBalance(veterinaryCost);
+                        if  (healthStatus.equals("Health")){
+                            System.out.printf("Lucky!!!Your animal %s: has rescued. \n",
+                                    animal.getName());
+                        }
+                        else {
+                            System.out.printf("Unlucky!!!Your animal %s: has not rescued. \n",
+                                    animal.getName());
+                        }
+
+                    }
+                    else{
+                        healthStatus = "Death";
+                        System.out.printf("Unlucky!!!Your animal %s: has not rescued. \n",
+                                animal.getName());
+                    }
+                    //update the animals health status
+                    switch (animalType) {
+                        case "Dog" -> ((Dog) animal).updateHealthStatus(healthStatus);
+                        case "Cat" -> ((Cat) animal).updateHealthStatus(healthStatus);
+                        case "Horse" -> ((Horse) animal).updateHealthStatus(healthStatus);
+                        case "Chicken" -> ((Chicken) animal).updateHealthStatus(healthStatus);
+                        case "Rabbit" -> ((Rabbit) animal).updateHealthStatus(healthStatus);
+                        default -> {throw new IllegalStateException("Unexpected value: " + animalType);}
+                    }
+                }
+            }
+        }
     }
 
 }

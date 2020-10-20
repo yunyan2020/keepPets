@@ -11,7 +11,11 @@ public abstract class Animal {
     public int lostHealth;
     public int addedHealth;
     public int breedQuantity;
+    public int veterinaryCost;
+    public String healthStatus; //Health Status can be "Sick","Health","Death"
     public boolean isAlive;
+    public int currentAge;
+    public int maxAge;
 
     public Animal(String name,String gender){
         this.name = name;
@@ -26,6 +30,10 @@ public abstract class Animal {
     public abstract void die();
 
     public abstract boolean isLiving();
+
+    public abstract void updateHealthStatus(String status);
+
+    public abstract void increaseAge();
 
     public static Animal breed(String gender) {
         return null;

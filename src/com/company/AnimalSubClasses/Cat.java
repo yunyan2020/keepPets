@@ -11,8 +11,12 @@ public class Cat extends Animal {
         initialPrice = 1800;
         healthGrowthRef = 0.5;
         breedQuantity = 3;
+        veterinaryCost = 500;
+        healthStatus = "Health";
         isAlive = true;
         editableFood = new String[]{"Beef","Milk"};
+        currentAge = 0;
+        maxAge = 16;
     }
 
     public int checkBalance(int balance){
@@ -20,12 +24,17 @@ public class Cat extends Animal {
     }
 
     public void printField(){
+        System.out.println("");
         super.printField();
-        System.out.println("Health Value: " + healthPercent
+        System.out.println("Health: " + healthPercent
                 + " Lost Health last round: " + lostHealth
                 + " Added Health by feed:" + addedHealth
-                + " Initial Price: " + initialPrice
-                + " Normal Breed quantity: " + breedQuantity );
+                + " Health Status: " + healthStatus
+        );
+        System.out.println(" Current Age: " + currentAge
+                + " Max Age: " + maxAge
+                + " Price: " + initialPrice
+                + " Breed quantity: " + breedQuantity);
     }
 
     public void eat(Food food, double quantity){
@@ -47,17 +56,30 @@ public class Cat extends Animal {
     public void lostHealth(){
         //Produce the random number between 10 - 30
         //randomNum = min + (int)(Math.random() * (max-min+1));
-        lostHealth =  10 + (int)(Math.random() * (30-20+1));
-        this.healthPercent = Math.max(this.healthPercent -lostHealth,0);
+        this.lostHealth  =  10 + (int)(Math.random() * (30-20+1));
+        this.healthPercent = Math.max(this.healthPercent -this.lostHealth,0);
+    }
+
+    public void increaseAge(){
+        this.currentAge++;
     }
 
     public void die(){
         if (this.healthPercent <= 0) {
+            updateHealthStatus("Death");
+            this.isAlive = false;
+        }
+        if (this.currentAge == this.maxAge){
+            updateHealthStatus("Death");
             this.isAlive = false;
         }
     }
 
     public boolean isLiving(){
+        //If the sick animal does not recuse,the health status will be "Death"
+        if (healthStatus.equals("Death")){
+            this.isAlive = false;
+        }
         return this.isAlive;
     }
 
@@ -74,6 +96,10 @@ public class Cat extends Animal {
         System.out.println("It is a new baby.What is the baby animals name:");
         var animalName = scanner.nextLine();
         return (new Cat(animalName,gender));
+    }
+
+    public void updateHealthStatus(String status){
+        this.healthStatus = status;
     }
 
 }
