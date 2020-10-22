@@ -1,5 +1,5 @@
 package com.company;
-
+// A comment you can delete again soon!
 public abstract class Animal {
     private String name;
     private Gender gender;
