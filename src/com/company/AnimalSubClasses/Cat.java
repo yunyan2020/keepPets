@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Cat extends Animal {
     public Cat(String name,String gender){
         super(name,gender);
-        initialPrice = 1800;
+        initialPrice = 1500;
         healthGrowthRef = 0.5;
         breedQuantity = 3;
         veterinaryCost = 500;

@@ -8,7 +8,7 @@ public class Horse extends Animal {
 
     public Horse(String name,String gender){
         super(name,gender);
-        initialPrice = 15000;
+        initialPrice = 3000;
         healthGrowthRef = 5;
         breedQuantity = 1;
         veterinaryCost =1000;

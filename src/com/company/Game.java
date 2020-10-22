@@ -1,11 +1,12 @@
 package com.company;
 import com.company.AnimalSubClasses.*;
 import com.company.FoodSubClasses.*;
-
-import java.util.*;
+import java.nio.file.*; // Files and Paths classes
+import java.util.*; // ArrayList etc
 
 public class Game {
     public Game(){
+
         startMenu();
     }
 
@@ -41,12 +42,26 @@ public class Game {
                     rounds = scanner.nextInt();
                 }
 
+
+                //Before call main Menu Serializer the whole game
+                /*
+                var filePath = Paths.get("keepPetsGame.ser");
+                if(!Files.exists(filePath)){
+                    Serializer.serialize(filePath + "", this);
+                    System.out.println("Serialized the game!");
+                }
+                */
                 //Call main Menu
                 mainMenu(countPlayers,rounds);
             }
             else if (choice == 2){
-                //write your file name
-                print("Please enter your file name");
+                // Deserialization
+                /*
+                var filePath = Paths.get("keepPetsGame.ser");
+                var game = (Game) Serializer.deserialize(filePath + "");
+                */
+                print("Sorry!!! This function have not finished");
+                return;
             }
         }while (true);
     }
@@ -63,16 +78,19 @@ public class Game {
         do{
             for (int i = 0; i < countPlayers; i++) {
                 //If the player has no money and has no animals then she/he is lost and exit the Game
-                var exitPlayerName = "";
-                if (players.get(i).name.equals(exitPlayerName)){
+                List<String> lostPlayerNameList = new ArrayList<>();
+                if (lostPlayerNameList.contains(players.get(i).name)){
                     i++;
                     break;
                 }
                 if ((players.get(i).balance <= 0) && (players.get(i).animals.size() == 0 )){
                     print("You are lost!Because you have no money and no animals!!!");
-                    exitPlayerName = players.get(i).name;
+                    if (!lostPlayerNameList.contains(players.get(i).name)){
+                        lostPlayerNameList.add(players.get(i).name);
+                    }
                     break;
                 }
+                System.out.println("*".repeat(110));
                 System.out.printf("It is your turn Player%d :%s. It is the round:%d" + "\n",i+1,players.get(i).name,countRounds);
                 if (players.get(i).animals.size() > 0 ){
                     //Let the animals lost their health
@@ -297,7 +315,7 @@ public class Game {
                 return;
             }
             //ask the user what kind of animal does he/she want to feed
-            var animalType =  Dialogs.askAnimalType();
+            var animalType =  Dialogs.askAnimalType("feed");
             //ask the user what kind of food does he/she want to feed
             print("Please enter your food type to feed(only input number)");
             for(var i = 0; i <player.foods.size(); i++) {
@@ -409,7 +427,7 @@ public class Game {
                 return;
             }
             //Ask the user what kind of animal does she/he want to breed
-            var animalType = Dialogs.askAnimalType();
+            var animalType = Dialogs.askAnimalType("breed");
 
             print("Please enter one of your animals name to breed");
             var animalName1 = scanner.next();
@@ -466,7 +484,7 @@ public class Game {
                 return;
             }
             //Ask the user what kind of animal does she/he want to sell
-            var animalType = Dialogs.askAnimalType();
+            var animalType = Dialogs.askAnimalType("sell");
 
             print("Please enter one of your animals name to sell");
             var animalNameToSell = scanner.next();
@@ -505,7 +523,8 @@ public class Game {
             var animalType = animal.getClass().getSimpleName();
             if (animal.healthStatus.equals("Health")){
                 // Create random number between 1-5
-                int rndNum = new Random().nextInt(5) + 1;
+                int rndNum = new Random().nextInt(2) + 1;
+                // int rndNum = new Random().nextInt(5) + 1;
                 var animalHealthStatus=  (rndNum == 1? "Sick":"Health");
                 if (animalHealthStatus.equals("Sick")){
                    switch (animalType){

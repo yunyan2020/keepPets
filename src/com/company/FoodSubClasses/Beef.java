@@ -16,7 +16,7 @@ public class Beef extends Food {
     }
     public void printField(){
         super.printField();
-        System.out.println("Quantity: " + totalQuantity + " KG" );
+        System.out.println("Quantity: " + Math.round(100*totalQuantity)/100 + " KG" );
     }
     public double getTotalQuantity(){
         return totalQuantity;
@@ -28,6 +28,10 @@ public class Beef extends Food {
 
     public void minusQuantity(double quantity){
         this.totalQuantity -= quantity;
+    }
+
+    public int getInitialPrice(){
+        return this.initialPrice;
     }
 
 }

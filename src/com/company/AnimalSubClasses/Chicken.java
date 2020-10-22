@@ -9,7 +9,7 @@ public class Chicken extends Animal {
 
     public Chicken(String name,String gender){
         super(name,gender);
-        initialPrice = 200;
+        initialPrice = 100;
         healthGrowthRef = 0.3;
         breedQuantity = 8;
         veterinaryCost = 80;

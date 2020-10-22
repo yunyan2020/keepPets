@@ -9,7 +9,7 @@ public class Rabbit extends Animal {
 
     public Rabbit(String name,String gender){
         super(name,gender);
-        initialPrice = 300;
+        initialPrice = 500;
         healthGrowthRef = 0.4;
         breedQuantity = 6;
         veterinaryCost =100;

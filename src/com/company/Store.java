@@ -10,7 +10,7 @@ public class Store {
 
     public static Animal buyAnimal(Player player){
         //Ask the user input Animal Type
-        var animalType = Dialogs.askAnimalType();
+        var animalType = Dialogs.askAnimalType("buy");
         System.out.println("What is your animals name:");
         var animalName = scanner.nextLine();
         //Check if the animal name exist in the players animal list

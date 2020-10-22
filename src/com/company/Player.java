@@ -6,7 +6,7 @@ public class Player {
     public String name;
     public ArrayList<Animal> animals = new ArrayList<>();
     public ArrayList<Food> foods = new ArrayList<>();
-    public int balance  = 5000;
+    public int balance  = 2000;
 
     public Player(String name){
         this.name = name;
