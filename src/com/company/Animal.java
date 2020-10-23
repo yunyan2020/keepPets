@@ -1,8 +1,8 @@
 package com.company;
-// A comment you can delete again soon!
+
 public abstract class Animal {
-    private String name;
-    private Gender gender;
+    private final String name;
+    private  final Gender gender;
     protected int healthPercent = 100;
     protected int initialPrice = 0;
     public String[] editableFood ;
@@ -34,6 +34,8 @@ public abstract class Animal {
     public abstract void updateHealthStatus(String status);
 
     public abstract void increaseAge();
+
+    public abstract int checkBalance(int balance);
 
     public static Animal breed(String gender) {
         return null;

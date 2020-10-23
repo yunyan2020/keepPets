@@ -43,7 +43,7 @@ public class Store {
         };
     }
 
-    public static Food buyFood(){
+    public static void buyFood(Player player){
         Scanner scanner = new Scanner(System.in);
         //Ask the user input Animal Type
         var foodType = Dialogs.askFoodType();
@@ -52,15 +52,46 @@ public class Store {
             scanner.nextLine();
         }
         var buyQuantity = scanner.nextInt();
-        return switch (foodType){
-                case "Beef"    -> (new Beef("Beef",buyQuantity));
-                case "Milk"    -> (new Milk("Milk",buyQuantity));
-                case "Grass"    -> (new Grass("Grass",buyQuantity));
-                case "Corn"    -> (new Corn("Corn",buyQuantity));
-                case "Oat"    -> (new Oat("Oat",buyQuantity));
-                default     -> null;
-            };
+        Food myNewFood = null;
+        switch (foodType){
+                case "Beef"    -> myNewFood =(new Beef("Beef",buyQuantity));
+                case "Milk"    -> myNewFood =(new Milk("Milk",buyQuantity));
+                case "Grass"   -> myNewFood =(new Grass("Grass",buyQuantity));
+                case "Corn"    -> myNewFood = (new Corn("Corn",buyQuantity));
+                case "Oat"     -> myNewFood =(new Oat("Oat",buyQuantity));
+            }
+        //Check the players rest balance if it can buy food
+        var balance = player.balance;
+        int restBalance = -1 ;
+        //check players balance if he/she can buy food
+        restBalance = myNewFood.checkBalance(balance);
+        var findSameFood = false;
+        Food sameFood = null;
+        var foodTotalQuantity = 0.0;
+        if (restBalance >=0){
+            for(var food: player.foods) {
+                if (food.getFoodType().equals(foodType) ){
+                    findSameFood = true;
+                    sameFood = food;
+                    // System.out.println("test sameFood"+sameFood.getFoodType() );
+                    foodTotalQuantity = food.getTotalQuantity();
+                    System.out.println("test foodTotalQuantity"+foodTotalQuantity);
+                    break;
+                }
+            }
+
+            if (findSameFood){
+                foodTotalQuantity += buyQuantity;
+                sameFood.updateQuantity(foodTotalQuantity);
+            }
+            else{
+                player.addFood(myNewFood);
+            }
+            player.updateBalance(restBalance);
+        }
+        else {
+            System.out.println("Sorry!You don't have enough money to buy this food");
+            System.out.printf("You only have money: %d kr. These food need money: %d kr \n",balance,myNewFood.getInitialPrice() * buyQuantity);
+        }
     }
-
-
 }

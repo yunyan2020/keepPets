@@ -3,6 +3,7 @@ package com.company;
 import com.company.AnimalSubClasses.*;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Dialogs {
 
@@ -57,74 +58,65 @@ public class Dialogs {
         return foodType;
     }
 
-    public static void askRescueAnimal(Player player){
+    public static void askSaveAnimal(Player player){
         Scanner scanner = new Scanner(System.in);
         var haveSickAnimal = false;
         if (player.animals.size() > 0 ){
             for (var animal: player.animals) {
-                var animalType = animal.getClass().getSimpleName();
                 var healthStatus = animal.healthStatus;
                 var veterinaryCost = animal.veterinaryCost;
                 if (healthStatus.equals("Sick")){
                     haveSickAnimal = true;
-                    System.out.printf("Do you want to rescue your animal: %s(y/n)? It will cost: %d \n",
+                    System.out.printf("Do you want to save your animal: %s(y/n)? It will cost: %d and it only have 50 percent chance to be save.\n",
                             animal.getName(),animal.veterinaryCost);
                     var rescue = (scanner.next()).toUpperCase().equals("Y");
                     if (rescue){
                         //judge the play have enough money to rescue
                         if (player.balance < veterinaryCost) {
-                            System.out.println("You don´t have enough money to recuse it");
+                            System.out.println("You don´t have enough money to save it");
                             veterinaryCost = 0;
                             healthStatus = "Death";
                             //update the animals health status
-                            switch (animalType) {
-                                case "Dog" -> ((Dog) animal).updateHealthStatus(healthStatus);
-                                case "Cat" -> ((Cat) animal).updateHealthStatus(healthStatus);
-                                case "Horse" -> ((Horse) animal).updateHealthStatus(healthStatus);
-                                case "Chicken" -> ((Chicken) animal).updateHealthStatus(healthStatus);
-                                case "Rabbit" -> ((Rabbit) animal).updateHealthStatus(healthStatus);
-                                default -> {throw new IllegalStateException("Unexpected value: " + animalType);}
-                            }
-                            System.out.printf("Sorry!!!Your animal %s: is death. \n",
+                            animal.updateHealthStatus(healthStatus);
+                            System.out.printf("So sad!!!Your animal %s: is death since you have no enough to save it. \n",
                                     animal.getName());
+                            delaySeconds(3);
                             continue;
                         }
                         var rd = Math.random()>0.5?1:0;
                         healthStatus = (rd == 1?"Health":"Death");
                         player.reduceBalance(veterinaryCost);
                         if  (healthStatus.equals("Health")){
-                            System.out.printf("Lucky!!!Your animal %s: has rescued. \n",
+                            System.out.printf("Lucky!!!Your animal %s: has saved. \n",
                                     animal.getName());
+                            delaySeconds(3);
+
                         }
                         else {
-                            System.out.printf("Unlucky!!!Your animal %s: has not rescued. \n",
+                            System.out.printf("Unlucky!!!Your animal %s: has not saved. It has died.\n",
                                     animal.getName());
+                            delaySeconds(3);
                         }
 
                     }
                     else{
                         healthStatus = "Death";
-                        System.out.printf("Your animal: %s has died since you have not recuse it \n",
+                        System.out.printf("Your animal: %s has died since you have not save it.Good Bye!\n ",
                                 animal.getName());
+                        delaySeconds(3);
                     }
                     //update the animals health status
-                    switch (animalType) {
-                        case "Dog" -> ((Dog) animal).updateHealthStatus(healthStatus);
-                        case "Cat" -> ((Cat) animal).updateHealthStatus(healthStatus);
-                        case "Horse" -> ((Horse) animal).updateHealthStatus(healthStatus);
-                        case "Chicken" -> ((Chicken) animal).updateHealthStatus(healthStatus);
-                        case "Rabbit" -> ((Rabbit) animal).updateHealthStatus(healthStatus);
-                        default -> {throw new IllegalStateException("Unexpected value: " + animalType);}
-                    }
-                    //Remove all the died animals
-                    for(var j = player.animals.size()-1;j >= 0;j--){
-                        var diedAnimal = player.animals.get(j);
-                        if (!diedAnimal.isAlive) {
-                            player.removeAnimal(diedAnimal);
-                        }
-                    }
+                    animal.updateHealthStatus(healthStatus);
                 }
             }
+        }
+    }
+
+    public static void delaySeconds(int secondsToSleep){
+        try {
+            TimeUnit.SECONDS.sleep(secondsToSleep);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
         }
     }
 

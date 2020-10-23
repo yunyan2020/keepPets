@@ -1,6 +1,6 @@
 package com.company.FoodSubClasses;
-
 import com.company.Food;
+import java.text.DecimalFormat;
 
 public class Oat extends Food {
     public int buyQuantity ;
@@ -8,7 +8,7 @@ public class Oat extends Food {
     public Oat(String foodType,int quantity){
         super(foodType);
         initialPrice = 80;
-        this.totalQuantity += quantity;
+        this.totalQuantity = quantity;
         this.buyQuantity = quantity;
     }
     public int checkBalance(int balance){
@@ -17,7 +17,8 @@ public class Oat extends Food {
 
     public void printField(){
         super.printField();
-        System.out.println("Quantity: " + Math.round(100*totalQuantity)/100 + " KG" );
+        DecimalFormat df = new DecimalFormat("#.00");
+        System.out.println("Quantity: " + df.format(totalQuantity) + " KG");
     }
 
     public double getTotalQuantity(){
@@ -25,7 +26,7 @@ public class Oat extends Food {
     }
 
     public void updateQuantity(double quantity){
-        this.totalQuantity += quantity;
+        this.totalQuantity = quantity;
     }
     public void minusQuantity(double quantity){
         this.totalQuantity -= quantity;

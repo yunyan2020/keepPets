@@ -6,7 +6,6 @@ import java.util.*; // ArrayList etc
 
 public class Game {
     public Game(){
-
         startMenu();
     }
 
@@ -41,8 +40,6 @@ public class Game {
                     }
                     rounds = scanner.nextInt();
                 }
-
-
                 //Before call main Menu Serializer the whole game
                 /*
                 var filePath = Paths.get("keepPetsGame.ser");
@@ -75,53 +72,69 @@ public class Game {
             players.add(new Player(playersName.toUpperCase()));
         }
         var countRounds = 1;
+        var lostPlayers = new ArrayList<Player>();
         do{
+            clear();
             for (int i = 0; i < countPlayers; i++) {
                 //If the player has no money and has no animals then she/he is lost and exit the Game
-                List<String> lostPlayerNameList = new ArrayList<>();
-                if (lostPlayerNameList.contains(players.get(i).name)){
-                    i++;
-                    break;
+                if (lostPlayers.size() == countPlayers ){
+                    print("All players has no money and animals. Game Over!");
+                    System.exit(0);
                 }
-                if ((players.get(i).balance <= 0) && (players.get(i).animals.size() == 0 )){
-                    print("You are lost!Because you have no money and no animals!!!");
-                    if (!lostPlayerNameList.contains(players.get(i).name)){
-                        lostPlayerNameList.add(players.get(i).name);
-                    }
-                    break;
+                if (!lostPlayers.contains(players.get(i)) && (players.get(i).balance <= 0) && (players.get(i).animals.size() == 0 )){
+                    print("You are lost! Because you have no money and no animals!!!");
+                    lostPlayers.add(players.get(i));
                 }
+
+                if (lostPlayers.contains(players.get(i))){
+                    continue;
+                }
+
                 System.out.println("*".repeat(110));
                 System.out.printf("It is your turn Player%d :%s. It is the round:%d" + "\n",i+1,players.get(i).name,countRounds);
                 if (players.get(i).animals.size() > 0 ){
-                    //Let the animals lost their health
-                    toLostHealth(players.get(i));
                     for (var animal: players.get(i).animals) {
+                        //Let the animals lost their health
+                        animal.lostHealth();
                         animal.increaseAge();
                         //After the animals lost their health and the animals age is getting older.
                         // Judge the animal is alive or death.
                         animal.die();
+                        if ((animal.healthStatus.equals("Death")) && (animal.healthPercent == 0)){
+                            System.out.println(animal.getName() + "has died since its health is .");
+                        }
+                        else if ((animal.healthStatus.equals("Death")) && (animal.currentAge == animal.maxAge)){
+                            System.out.println(animal.getName() + "has died since it is too old.");
+                        }
+                        //Some health animals got sick
+                        if (animal.healthStatus.equals("Health")) {
+                            animalsGotSick(animal);
+                        }
                     }
-                    //Some animals got sick
-                    animalsGotSick(players.get(i));
+
+                }
+                //Remove all the died animals
+                for(var j = players.get(i).animals.size()-1;j >= 0;j--){
+                    var diedAnimal = players.get(i).animals.get(j);
+                    if (!diedAnimal.isLiving()) {
+                        players.get(i).removeAnimal(diedAnimal);
+                    }
                 }
 
                 //Call the method to show information to the player
                 showInfo(players.get(i));
 
-                //If there are some sick animals.Ask the player if she/he will rescue them
+                //If there are some sick animals.Ask the player if she/he will save them
                 //And show the information to the user again.
-                Dialogs.askRescueAnimal(players.get(i));
-
+                Dialogs.askSaveAnimal(players.get(i));
+                clear();
                 //Remove all the died animals
-                var removeDiedAnimal = false;
                 for(var j = players.get(i).animals.size()-1;j >= 0;j--){
                     var diedAnimal = players.get(i).animals.get(j);
-                    if (!diedAnimal.isAlive) {
+                    if (!diedAnimal.isLiving()) {
                         players.get(i).removeAnimal(diedAnimal);
-                        removeDiedAnimal = true;
                     }
                 }
-                if (removeDiedAnimal) {showInfo(players.get(i));}
 
                 //print the game´s main menu
                 print("Please enter your choice:");
@@ -129,7 +142,7 @@ public class Game {
                 print("1:Buy the animal");
                 print("2:Buy the food");
                 print("3:Feed the animal");
-                print("4:Breed the new animal");
+                print("4:Mate the new animal");
                 print("5:Sale the animal");
                 print("-------------------------");
                 while (!scanner.hasNextInt()) {
@@ -139,18 +152,23 @@ public class Game {
 
                 switch (functionNumber){
                     case 1:
+                        showAnimalInfo(players.get(i));
                         toBuyAnimals(players.get(i));
                         break;
                     case 2:
+                        showFoodInfo(players.get(i));
                         toBuyFoods(players.get(i));
                         break;
                     case 3:
+                        showInfo(players.get(i));
                         toFeedAnimals(players.get(i));
                         break;
                     case 4:
-                        toBreedAnimals(players.get(i));
+                        showAnimalInfo(players.get(i));
+                        toMateAnimals(players.get(i));
                         break;
                     case 5:
+                        showAnimalInfo(players.get(i));
                         toSellAnimals(players.get(i));
                         break;
                     default:
@@ -162,6 +180,7 @@ public class Game {
         } while (countRounds <= rounds);
         //Sell every players all animals and compare who has the most money
         //the player who has the most money win the game
+        clear();
         print("You have played all rounds");
         print("Now is time to sell all animals for everyone and print the winner");
         for (var player:players) {
@@ -169,9 +188,8 @@ public class Game {
         }
         players.sort((Player a, Player b) -> { return a.balance > b.balance ? -1 : 1; });
         var winnerName = players.get(0).name;
-        var winnerBalance    = players.get(0).balance;
+        var winnerBalance= players.get(0).balance;
         System.out.printf("Congratulation!!! %s You won!!! You have money:%d \n",winnerName,winnerBalance);
-       // System.out.printf("Congratulation!!! %sYou won!!! You have money:d%",players.get(0).name,players.get(0).balance);
         print("Game over");
         System.exit(0);
     }
@@ -181,24 +199,9 @@ public class Game {
         if(!x.equals("")){ System.out.println(x); }
     }
 
-
-    //This method to let the animals lost their health.
-    private void toLostHealth(Player player){
-        for(var animal: player.animals) {
-            var className = animal.getClass().getSimpleName();
-            switch(className){
-                case "Dog"      -> ((Dog) animal).lostHealth();
-                case "Cat"      -> ((Cat) animal).lostHealth();
-                case "Horse"    -> ((Horse) animal).lostHealth();
-                case "Chicken"  -> ((Chicken) animal).lostHealth();
-                case "Rabbit"   -> ((Rabbit) animal).lostHealth();
-            }
-        }
-    }
-
     //This method to show players information about the player owned.
     private void showInfo(Player player){
-        System.out.printf("You have money: %d  \n",player.balance);
+        System.out.printf("You(player:%s) have money: %d  \n",player.name,player.balance);
         if (player.animals.size() > 0 ){
             print("You have owned following animals");
             System.out.println("-".repeat(110));
@@ -206,21 +209,46 @@ public class Game {
                 var animalType  = animal.getClass().getSimpleName();
                 System.out.print(animalType + " ");
                 animal.printField();
-                if (!animal.isLiving()){
-                    System.out.printf("Your animal:%s has died!!! \n",animal.getName());
-                }
             }
             System.out.println("-".repeat(110));
         }
         if (player.foods.size() > 0 ){
+            System.out.println("");
             print("You have owned following foods");
-            System.out.println("-".repeat(110));
+            System.out.println("=".repeat(110));
             for(var food: player.foods) {
                 food.printField();
             }
+            System.out.println("=".repeat(110));
+        }
+    }
+    //This method to show players animal information about the player owned.
+    private void showAnimalInfo(Player player){
+        System.out.printf("You(player:%s) have money: %d  \n",player.name,player.balance);
+        if (player.animals.size() > 0 ){
+            print("You have owned following animals");
+            System.out.println("-".repeat(110));
+            for(var animal: player.animals){
+                var animalType  = animal.getClass().getSimpleName();
+                System.out.print(animalType + " ");
+                animal.printField();
+            }
             System.out.println("-".repeat(110));
         }
+    }
 
+    //This method to show players food information about the player owned.
+    private void showFoodInfo(Player player){
+        System.out.printf("You(player:%s) have money: %d  \n",player.name,player.balance);
+        if (player.foods.size() > 0 ){
+            System.out.println("");
+            print("You have owned following foods");
+            System.out.println("=".repeat(110));
+            for(var food: player.foods) {
+                food.printField();
+            }
+            System.out.println("=".repeat(110));
+        }
     }
 
     //In this method: the player can buy animals from Store.
@@ -231,15 +259,7 @@ public class Game {
             Animal myNewAnimal = Store.buyAnimal(player);
             //Check the players rest balance if it can buy animal
             var balance = player.balance;
-            var className = myNewAnimal.getClass().getSimpleName();
-            int restBalance = -1 ;
-            switch(className){
-                case "Dog" -> restBalance=((Dog) myNewAnimal).checkBalance(balance);
-                case "Cat" -> restBalance=((Cat) myNewAnimal).checkBalance(balance);
-                case "Horse" -> restBalance=((Horse) myNewAnimal).checkBalance(balance);
-                case "Chicken" -> restBalance=((Chicken) myNewAnimal).checkBalance(balance);
-                case "Rabbit" -> restBalance=((Rabbit) myNewAnimal).checkBalance(balance);
-            }
+            var restBalance= myNewAnimal.checkBalance(balance);
             if (restBalance >=0){
                 player.addAnimal(myNewAnimal);
                 player.updateBalance(restBalance);
@@ -259,41 +279,7 @@ public class Game {
         Scanner scanner = new Scanner(System.in);
         var buyFood = true;
         do{
-            Food myNewFood = Store.buyFood();
-            //Check the players rest balance if it can buy food
-            var balance = player.balance;
-            var className = myNewFood.getClass().getSimpleName();
-            int restBalance = -1 ;
-            switch(className){
-                case "Beef" -> restBalance=((Beef) myNewFood).checkBalance(balance);
-                case "Milk" -> restBalance=((Milk) myNewFood).checkBalance(balance);
-                case "Grass" -> restBalance=((Grass) myNewFood).checkBalance(balance);
-                case "Corn" -> restBalance=((Corn) myNewFood).checkBalance(balance);
-                case "Oat"  -> restBalance=((Oat) myNewFood).checkBalance(balance);
-            }
-            var findSameFood = false;
-            Food myRemoveFood = null;
-            var foodTotalQuantity = 0.0;
-            if (restBalance >=0){
-                for(var food: player.foods) {
-                    if (food.getFoodType().equals(className) ){
-                        findSameFood = true;
-                        myRemoveFood = food;
-                        foodTotalQuantity = food.getTotalQuantity();
-                    }
-                }
-                player.addFood(myNewFood);
-                if (findSameFood){
-                    player.removeFood(myRemoveFood);
-                    for(var food: player.foods) {
-                        if (food.getFoodType().equals(className) )
-                        {food.updateQuantity(foodTotalQuantity);
-                        }
-                    }
-                }
-                player.updateBalance(restBalance);
-            }
-            else print("Sorry!You don't have enough money to buy this food");
+            Store.buyFood(player);
             showInfo(player);
             System.out.println("Would you like to buy other food(y/n)");
             buyFood = (scanner.next()).toUpperCase().equals("Y");
@@ -306,12 +292,10 @@ public class Game {
         do{
             if (player.animals.size() == 0 ) {
                 print("You don't have any animals to feed");
-                feedAnimal = false;
                 return;
             }
             if (player.foods.size() == 0 ) {
                 print("You don't have any foods to feed");
-                feedAnimal = false;
                 return;
             }
             //ask the user what kind of animal does he/she want to feed
@@ -319,14 +303,14 @@ public class Game {
             //ask the user what kind of food does he/she want to feed
             print("Please enter your food type to feed(only input number)");
             for(var i = 0; i <player.foods.size(); i++) {
-                System.out.printf(i+1 + "."+ player.foods.get(i).getFoodType()+ " ");
+                System.out.print(i+1 + "."+ player.foods.get(i).getFoodType()+ " ");
             }
             System.out.println();
             var foodTypeNumber = scanner.next();
             var foodType = "";
             //find the food type according to the user´s input number
             for(var i = 0; i <player.foods.size(); i++) {
-                foodType = foodTypeNumber.equals((i+1)+"")?foodType =player.foods.get(i).getFoodType():"";
+                foodType = foodTypeNumber.equals((i+1)+"")?player.foods.get(i).getFoodType():"";
                 if (!foodType.equals("")){
                     break;
                 }
@@ -340,8 +324,13 @@ public class Game {
             if (foodToFeed == null){
                 print("You don´t have such food to feed.");
                 System.out.println("Would you like to continue to feed other animal(y/n)");
-                feedAnimal = (scanner.next()).toUpperCase().equals("Y");
-                continue;
+               if (feedAnimal = (scanner.next()).toUpperCase().equals("Y")){
+                   continue;
+               }
+               else {
+                   return;
+               }
+
             }
             print("How many food do you want to feed?");
             var quantity = scanner.next();
@@ -377,66 +366,58 @@ public class Game {
                     animalToFeed = animal;
                 }
             }
-            if (!isFoodSuitable(animalToFeed,animalType,foodType)){
+            if (!Arrays.asList(animalToFeed.editableFood).contains(foodType)){
                 print("The food that you choose can not feed your animal that want to feed.");
                 System.out.println("Would you like to continue to feed other animal(y/n)");
-                feedAnimal = (scanner.next()).toUpperCase().equals("Y");
-                continue;
+                if  (feedAnimal = (scanner.next()).toUpperCase().equals("Y")){
+                    continue;
+                }
+                else{
+                    return;
+                }
             }
 
             //Star to eat food
-            switch (animalType) {
-                case "Dog" -> ((Dog) animalToFeed).eat(foodToFeed, feedQuantity);
-                case "Cat" -> ((Cat) animalToFeed).eat(foodToFeed, feedQuantity);
-                case "Horse" -> ((Horse) animalToFeed).eat(foodToFeed, feedQuantity);
-                case "Chicken" -> ((Chicken) animalToFeed).eat(foodToFeed, feedQuantity);
-                case "Rabbit" -> ((Rabbit) animalToFeed).eat(foodToFeed, feedQuantity);
-                default -> {throw new IllegalStateException("Unexpected value: " + animalType);}
-            }
+            animalToFeed.eat(foodToFeed, feedQuantity);
+
             //After the animal eating food,minus the foods quantity
             var totalQuantity = 0.0 ;
-            switch(foodType){
-                case "Beef" -> {((Beef) foodToFeed).minusQuantity(feedQuantity);
-                               totalQuantity = ((Beef) foodToFeed).getTotalQuantity();}
-                case "Milk" -> {((Milk)foodToFeed).minusQuantity(feedQuantity);
-                                 totalQuantity = ((Milk) foodToFeed).getTotalQuantity();}
-                case "Grass" -> {((Grass) foodToFeed).minusQuantity(feedQuantity);
-                                totalQuantity = ((Grass) foodToFeed).getTotalQuantity();}
-                case "Corn" -> {((Corn) foodToFeed).minusQuantity(feedQuantity);
-                                 totalQuantity = ((Corn) foodToFeed).getTotalQuantity();}
-                case "Oat"  -> {((Oat) foodToFeed).minusQuantity(feedQuantity);
-                                 totalQuantity = ((Oat) foodToFeed).getTotalQuantity();}
-                default -> {throw new IllegalStateException("Unexpected value: " + foodType);}
-            }
+            foodToFeed.minusQuantity(feedQuantity);
+            totalQuantity = foodToFeed.getTotalQuantity();
+
             //If the food quantity is 0 then remove from food list.
+            var removeFood = false;
             if (totalQuantity == 0) {
                 player.removeFood(foodToFeed);
+                removeFood = true;
             }
-            showInfo(player);
+            if (removeFood){
+                showInfo(player);
+            }
+
             System.out.println("Would you like to feed other animal(y/n)");
             feedAnimal = (scanner.next()).toUpperCase().equals("Y");
         }while (feedAnimal);
     }
-    private void toBreedAnimals(Player player){
+    private void toMateAnimals(Player player){
         Scanner scanner = new Scanner(System.in);
         var breedAnimal = true;
         do{
             if (player.animals.size() == 0 ) {
-                print("You don't have any animals to feed");
-                breedAnimal = false;
+                print("You don't have any animals to mate");
                 return;
             }
             //Ask the user what kind of animal does she/he want to breed
-            var animalType = Dialogs.askAnimalType("breed");
+            var animalType = Dialogs.askAnimalType("mate");
 
-            print("Please enter one of your animals name to breed");
+            print("Please enter one of your animals name to mate");
             var animalName1 = scanner.next();
             //Check if the animal name not exist in the players animal list
             if  (CheckInput.isAnimalNameNotExist(player,animalType,animalName1)){
                 continue;
             }
 
-            print("Please enter another of your animals name to breed");
+            print("Please enter another of your animals name to mate");
             var animalName2 = scanner.next();
             //Check if the animal name not exist in the players animal list
             if  (CheckInput.isAnimalNameNotExist(player,animalType,animalName2)){
@@ -444,8 +425,8 @@ public class Game {
             }
 
             //Check if the animal is suitable for breed
-            var canBeBreed = areAnimalSuitableToBreed(player,animalType,animalName1,animalName2);
-            if (!canBeBreed){ continue;}
+            var canBeMate = areAnimalSuitableToMate(player,animalType,animalName1,animalName2);
+            if (!canBeMate){ continue;}
             //get quantity of the animal that can breed
             var breedQuantity = 0;
             for(var animal:player.animals){
@@ -469,7 +450,7 @@ public class Game {
                 player.addAnimal(myNewAnimal);
             }
             showInfo(player);
-            System.out.println("Would you like to breed other animal(y/n)");
+            System.out.println("Would you like to mate other animal(y/n)");
             breedAnimal = (scanner.next()).toUpperCase().equals("Y");
         }while (breedAnimal);
     }
@@ -480,7 +461,6 @@ public class Game {
         do{
             if (player.animals.size() == 0 ) {
                 print("You don't have any animals to sell");
-                sellAnimal = false;
                 return;
             }
             //Ask the user what kind of animal does she/he want to sell
@@ -492,7 +472,13 @@ public class Game {
             if  (CheckInput.isAnimalNameNotExist(player,animalType,animalNameToSell)){
                 System.out.println("Would you like to sell other animal(y/n)");
                 sellAnimal = (scanner.next()).toUpperCase().equals("Y");
-                return;
+                if (sellAnimal ){
+                    continue;
+                }
+                else {
+                    return;
+                }
+
             }
             Animal animalToSell = null;
             for(var animal:player.animals){
@@ -500,7 +486,7 @@ public class Game {
                     animalToSell = animal;
                 }
             }
-            var sellAmount = getAmountOfSellAnimal(animalToSell,animalType);
+            var sellAmount = getAmountOfSellAnimal(animalToSell);
             player.increaseBalance(sellAmount);
             player.removeAnimal(animalToSell);
             showInfo(player);
@@ -512,56 +498,25 @@ public class Game {
 
     private void  toSellAllAnimals(Player player){
         for(var animal:player.animals){
-            var sellAmount = getAmountOfSellAnimal(animal,animal.getClass().getSimpleName());
+            var sellAmount = getAmountOfSellAnimal(animal);
             player.increaseBalance(sellAmount);
         }
         System.out.printf("%s You have money: %d  \n",player.name,player.balance);
     }
 
-    private void animalsGotSick(Player player){
-        for(var animal:player.animals){
-            var animalType = animal.getClass().getSimpleName();
-            if (animal.healthStatus.equals("Health")){
-                // Create random number between 1-5
-                int rndNum = new Random().nextInt(2) + 1;
-                // int rndNum = new Random().nextInt(5) + 1;
-                var animalHealthStatus=  (rndNum == 1? "Sick":"Health");
-                if (animalHealthStatus.equals("Sick")){
-                   switch (animalType){
-                       case "Dog" ->  ((Dog) animal).updateHealthStatus(animalHealthStatus);
-                       case "Cat" ->  ((Cat) animal).updateHealthStatus(animalHealthStatus);
-                       case "Horse" -> ((Horse) animal).updateHealthStatus(animalHealthStatus);
-                       case "Chicken" -> ((Chicken) animal).updateHealthStatus(animalHealthStatus);
-                       case "Rabbit" -> ((Rabbit) animal).updateHealthStatus(animalHealthStatus);
-                   }
-               }
-            }
+    private void animalsGotSick(Animal animal) {
+        // Create random number between 1-5
+        int rndNum = new Random().nextInt(5) + 1;
+        var animalHealthStatus = (rndNum == 1 ? "Sick" : "Health");
+        if (animalHealthStatus.equals("Sick")) {
+            animal.updateHealthStatus(animalHealthStatus);
         }
     }
 
-    /**
-     * This  method check if the food suitable for animal
-     * @param animal
-     * @param animalClassName
-     * @param foodType
-     * @return
-     */
-    private boolean isFoodSuitable(Animal animal,String animalClassName,String foodType) {
-       boolean b = switch (animalClassName) {
-            case "Dog" -> Arrays.asList(((Dog) animal).editableFood).contains(foodType);
-            case "Cat" -> Arrays.asList(((Cat) animal).editableFood).contains(foodType);
-            case "Horse" -> Arrays.asList(((Horse) animal).editableFood).contains(foodType);
-            case "Chicken" -> Arrays.asList(((Chicken) animal).editableFood).contains(foodType);
-            case "Rabbit" -> Arrays.asList(((Rabbit) animal).editableFood).contains(foodType);
-            default -> false;
-        };
-        return b;
-    }
-
-    private boolean areAnimalSuitableToBreed(Player player, String animalType,String animalName1, String animalName2){
+   private boolean areAnimalSuitableToMate(Player player, String animalType,String animalName1, String animalName2){
         String animalGender1 = "";
         String animalGender2 = "";
-        var canBeBreed = false;
+        var canBeMate = false;
         for (var animal : player.animals) {
             //Check if the animal is suitable for breed
             if ((animal.getName().equals(animalName1)) && (animal.getClass().getSimpleName().equals(animalType))) {
@@ -573,43 +528,31 @@ public class Game {
         }
 
         if (animalGender1.equals("MALE") && animalGender2.equals("FEMALE")) {
-            canBeBreed = true;
+            canBeMate = true;
         } else if (animalGender1.equals("FEMALE") && animalGender2.equals("MALE")) {
-            canBeBreed = true;
+            canBeMate = true;
         } else {
             System.out.println("These two animals can not be breed because their gender." +
                     " Only one is Male other is Female so that they can be breed");
-            canBeBreed = false;
+            canBeMate = false;
         }
-        return canBeBreed;
+        return canBeMate;
     }
 
-    private int getAmountOfSellAnimal(Animal animalToSell, String animalType) {
-        var sellAmount = 0;
-        var price = 0;
-        var healthValue = 0;
-        switch (animalType) {
-            case "Dog" -> {  price =  ((Dog) animalToSell).getInitialPrice();
-                healthValue =  ((Dog) animalToSell).getHealthPercent();
-                sellAmount = (int)Math.round(price * healthValue /100);
-            }
-            case "Cat" -> {  price =  ((Cat) animalToSell).getInitialPrice();
-                healthValue =  ((Cat) animalToSell).getHealthPercent();
-                sellAmount = (int)Math.round(price * healthValue /100);
-            }
-            case "Horse" -> { price =  ((Horse) animalToSell).getInitialPrice();
-                healthValue =  ((Horse) animalToSell).getHealthPercent();
-                sellAmount = (int)Math.round(price * healthValue /100);
-            }
-            case "Chicken" -> { price =  ((Chicken) animalToSell).getInitialPrice();
-                healthValue =  ((Chicken) animalToSell).getHealthPercent();
-                sellAmount = (int)Math.round(price * healthValue /100);
-            }
-            case "Rabbit" -> { price =  ((Rabbit) animalToSell).getInitialPrice();
-                healthValue =  ((Rabbit) animalToSell).getHealthPercent();
-                sellAmount = (int)Math.round(price * healthValue /100);
-            }
+    private int getAmountOfSellAnimal(Animal animalToSell) {
+        var price = animalToSell.getInitialPrice();
+        //convert maxAge to double
+        var maxAge  = animalToSell.maxAge +0.0;
+        //If animal's age is more than 70% of whole life time
+        //the price will reduce half and then multiply healthPercent
+        if ((animalToSell.currentAge/maxAge) >= 0.7){
+            price = Math.round(price/2);
         }
-        return sellAmount;
+        return (Math.round(price * animalToSell.getHealthPercent() /100));
+    }
+
+    public void clear(){
+        // "clear" the console by printing 60 new lines
+        System.out.println("\n".repeat(60));
     }
 }
