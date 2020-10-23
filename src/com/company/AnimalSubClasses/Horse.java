@@ -52,7 +52,7 @@ public class Horse extends Animal {
             this.totalFeedQuantity = 0;
         }
     }
-
+    //This method is to let animal lost health between 10-30
     public void lostHealth(){
         //Produce the random number between 10 - 30
         //randomNum = min + (int)(Math.random() * (max-min+1));
@@ -63,7 +63,6 @@ public class Horse extends Animal {
     public void increaseAge(){
         this.currentAge++;
     }
-
 
     public void die(){
         if (this.healthPercent <= 0) {

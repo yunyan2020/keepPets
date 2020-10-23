@@ -37,10 +37,6 @@ public abstract class Animal {
 
     public abstract int checkBalance(int balance);
 
-    public static Animal breed(String gender) {
-        return null;
-    }
-
     public String getName(){
         return name;
     }

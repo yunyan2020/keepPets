@@ -123,17 +123,28 @@ public class Game {
 
                 //Call the method to show information to the player
                 showInfo(players.get(i));
+                Dialogs.delaySeconds(5);
+                clear();
 
                 //If there are some sick animals.Ask the player if she/he will save them
                 //And show the information to the user again.
                 Dialogs.askSaveAnimal(players.get(i));
-                clear();
                 //Remove all the died animals
                 for(var j = players.get(i).animals.size()-1;j >= 0;j--){
                     var diedAnimal = players.get(i).animals.get(j);
                     if (!diedAnimal.isLiving()) {
                         players.get(i).removeAnimal(diedAnimal);
                     }
+                }
+
+                //After some sick animals are died. It is possible the player have no money and no animals
+                if (!lostPlayers.contains(players.get(i)) && (players.get(i).balance <= 0) && (players.get(i).animals.size() == 0 )){
+                    print("You are lost! Because you have no money and no animals!!!");
+                    lostPlayers.add(players.get(i));
+                }
+
+                if (lostPlayers.contains(players.get(i))){
+                    continue;
                 }
 
                 //print the game´s main menu
@@ -264,10 +275,25 @@ public class Game {
                 player.addAnimal(myNewAnimal);
                 player.updateBalance(restBalance);
             }
-            else print("Sorry!You don't have enough money to buy this animal");
-            showInfo(player);
+            else {
+                print("Sorry!You don't have enough money to buy this animal");
+                Dialogs.delaySeconds(3);
+                clear();
+                break;
+            }
+            if (balance == 0){
+               print("Since you have no money.It will be another players turn");
+               Dialogs.delaySeconds(3);
+               clear();
+                break;
+            }
             System.out.println("Would you like to buy other animal(y/n)");
             buyAnimal = (scanner.next()).toUpperCase().equals("Y");
+            if (!buyAnimal){
+                showInfo(player);
+                Dialogs.delaySeconds(3);
+                clear();
+            }
         }while (buyAnimal);
     }
 
@@ -281,8 +307,20 @@ public class Game {
         do{
             Store.buyFood(player);
             showInfo(player);
+            var balance = player.balance;
+            if (balance == 0){
+                print("Since you have no money.It will be another players turn");
+                Dialogs.delaySeconds(3);
+                clear();
+                break;
+            }
             System.out.println("Would you like to buy other food(y/n)");
             buyFood = (scanner.next()).toUpperCase().equals("Y");
+            if (!buyFood){
+                showInfo(player);
+                Dialogs.delaySeconds(3);
+                clear();
+            }
         }while (buyFood);
     }
 
@@ -292,10 +330,14 @@ public class Game {
         do{
             if (player.animals.size() == 0 ) {
                 print("You don't have any animals to feed");
+                Dialogs.delaySeconds(3);
+                clear();
                 return;
             }
             if (player.foods.size() == 0 ) {
                 print("You don't have any foods to feed");
+                Dialogs.delaySeconds(3);
+                clear();
                 return;
             }
             //ask the user what kind of animal does he/she want to feed
@@ -347,7 +389,7 @@ public class Game {
             }
 
             if (feedQuantity <= 0){
-                print("Please input the feed quantity more than 0.0");
+                print("feed quantity <= 0 or you are not input a number ");
                 System.out.println("Would you like to continue to feed other animal(y/n)");
                 feedAnimal = (scanner.next()).toUpperCase().equals("Y");
                 continue;
@@ -394,9 +436,13 @@ public class Game {
             if (removeFood){
                 showInfo(player);
             }
-
             System.out.println("Would you like to feed other animal(y/n)");
             feedAnimal = (scanner.next()).toUpperCase().equals("Y");
+            if (!feedAnimal){
+                showInfo(player);
+                Dialogs.delaySeconds(3);
+                clear();
+            }
         }while (feedAnimal);
     }
     private void toMateAnimals(Player player){
@@ -405,6 +451,8 @@ public class Game {
         do{
             if (player.animals.size() == 0 ) {
                 print("You don't have any animals to mate");
+                Dialogs.delaySeconds(3);
+                clear();
                 return;
             }
             //Ask the user what kind of animal does she/he want to breed
@@ -449,9 +497,13 @@ public class Game {
                 }
                 player.addAnimal(myNewAnimal);
             }
-            showInfo(player);
             System.out.println("Would you like to mate other animal(y/n)");
             breedAnimal = (scanner.next()).toUpperCase().equals("Y");
+            if (!breedAnimal){
+                showInfo(player);
+                Dialogs.delaySeconds(3);
+                clear();
+            }
         }while (breedAnimal);
     }
 
@@ -461,6 +513,8 @@ public class Game {
         do{
             if (player.animals.size() == 0 ) {
                 print("You don't have any animals to sell");
+                Dialogs.delaySeconds(3);
+                clear();
                 return;
             }
             //Ask the user what kind of animal does she/he want to sell
@@ -493,6 +547,11 @@ public class Game {
 
             System.out.println("Would you like to sell other animal(y/n)");
             sellAnimal = (scanner.next()).toUpperCase().equals("Y");
+            if (!sellAnimal){
+                showInfo(player);
+                Dialogs.delaySeconds(3);
+                clear();
+            }
         }while (sellAnimal);
     }
 
@@ -516,17 +575,27 @@ public class Game {
    private boolean areAnimalSuitableToMate(Player player, String animalType,String animalName1, String animalName2){
         String animalGender1 = "";
         String animalGender2 = "";
+        int    animalCurrentAge1 = 0;
+        int    animalCurrentAge2 = 0;
         var canBeMate = false;
         for (var animal : player.animals) {
-            //Check if the animal is suitable for breed
+            //get two animals gender
             if ((animal.getName().equals(animalName1)) && (animal.getClass().getSimpleName().equals(animalType))) {
                 animalGender1 = animal.getGender();
             }
             if ((animal.getName().equals(animalName2)) && (animal.getClass().getSimpleName().equals(animalType))) {
                 animalGender2 = animal.getGender();
             }
+            //get two animals age
+            if ((animal.getName().equals(animalName1)) && (animal.getClass().getSimpleName().equals(animalType))) {
+                animalCurrentAge1 = animal.currentAge;
+            }
+            if ((animal.getName().equals(animalName2)) && (animal.getClass().getSimpleName().equals(animalType))) {
+                animalCurrentAge2 = animal.currentAge;
+            }
         }
 
+       //Check if the animal's gender is suitable for breed
         if (animalGender1.equals("MALE") && animalGender2.equals("FEMALE")) {
             canBeMate = true;
         } else if (animalGender1.equals("FEMALE") && animalGender2.equals("MALE")) {
@@ -536,6 +605,15 @@ public class Game {
                     " Only one is Male other is Female so that they can be breed");
             canBeMate = false;
         }
+
+       //Check if the animal's age is suitable for breed
+       if ((animalCurrentAge1 >= 3) && (animalCurrentAge2 >= 3)) {
+           canBeMate = true;
+       }
+       else {
+           System.out.println("These two animals are too young to mate! Their age have to both more than 3 years old" );
+           canBeMate = false;
+       }
         return canBeMate;
     }
 

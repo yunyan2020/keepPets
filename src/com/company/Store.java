@@ -1,7 +1,6 @@
 package com.company;
 import com.company.AnimalSubClasses.*;
 import com.company.FoodSubClasses.*;
-
 import java.util.*;
 
 public class Store {
@@ -62,6 +61,10 @@ public class Store {
             }
         //Check the players rest balance if it can buy food
         var balance = player.balance;
+        if (balance == 0){
+            System.out.println("You have no money!You can not buy any food.");
+            return;
+        }
         int restBalance = -1 ;
         //check players balance if he/she can buy food
         restBalance = myNewFood.checkBalance(balance);
@@ -73,10 +76,7 @@ public class Store {
                 if (food.getFoodType().equals(foodType) ){
                     findSameFood = true;
                     sameFood = food;
-                    // System.out.println("test sameFood"+sameFood.getFoodType() );
                     foodTotalQuantity = food.getTotalQuantity();
-                    System.out.println("test foodTotalQuantity"+foodTotalQuantity);
-                    break;
                 }
             }
 
@@ -92,6 +92,7 @@ public class Store {
         else {
             System.out.println("Sorry!You don't have enough money to buy this food");
             System.out.printf("You only have money: %d kr. These food need money: %d kr \n",balance,myNewFood.getInitialPrice() * buyQuantity);
+            Dialogs.delaySeconds(3);
         }
     }
 }

@@ -53,7 +53,7 @@ public class Rabbit extends Animal {
             this.totalFeedQuantity = 0;
         }
     }
-
+    //This method is to let animal lost health between 10-30
     public void lostHealth(){
         //Produce the random number between 10 - 30
         //randomNum = min + (int)(Math.random() * (max-min+1));
@@ -86,8 +86,8 @@ public class Rabbit extends Animal {
 
     public int getBreedQuantity(){
         return breedQuantity;
-    }public int getHealthPercent(){return healthPercent;}
-
+    }
+    public int getHealthPercent(){return healthPercent;}
     public int getInitialPrice(){return initialPrice;}
 
 

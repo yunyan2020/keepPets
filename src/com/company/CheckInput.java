@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CheckInput {
+    //to check if the input string is number
     public static boolean isNumeric(char[] str) {
         if(str.length == 0){
             return false;

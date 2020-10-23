@@ -60,13 +60,11 @@ public class Dialogs {
 
     public static void askSaveAnimal(Player player){
         Scanner scanner = new Scanner(System.in);
-        var haveSickAnimal = false;
         if (player.animals.size() > 0 ){
             for (var animal: player.animals) {
                 var healthStatus = animal.healthStatus;
                 var veterinaryCost = animal.veterinaryCost;
                 if (healthStatus.equals("Sick")){
-                    haveSickAnimal = true;
                     System.out.printf("Do you want to save your animal: %s(y/n)? It will cost: %d and it only have 50 percent chance to be save.\n",
                             animal.getName(),animal.veterinaryCost);
                     var rescue = (scanner.next()).toUpperCase().equals("Y");
@@ -74,11 +72,10 @@ public class Dialogs {
                         //judge the play have enough money to rescue
                         if (player.balance < veterinaryCost) {
                             System.out.println("You don´t have enough money to save it");
-                            veterinaryCost = 0;
                             healthStatus = "Death";
                             //update the animals health status
                             animal.updateHealthStatus(healthStatus);
-                            System.out.printf("So sad!!!Your animal %s: is death since you have no enough to save it. \n",
+                            System.out.printf("So sad!!!Your animal %s: is death since you have no enough money to save it. \n",
                                     animal.getName());
                             delaySeconds(3);
                             continue;
