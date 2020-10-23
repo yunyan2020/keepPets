@@ -24,14 +24,14 @@ public class Grass extends Food {
     public double getTotalQuantity(){
         return totalQuantity;
     }
+
     public void updateQuantity(double quantity){
         this.totalQuantity = quantity;
     }
+
     public void minusQuantity(double quantity){
         this.totalQuantity -= quantity;
     }
+
     public int getInitialPrice(){ return this.initialPrice;}
-    public int getBuyQuantity(){
-        return this.buyQuantity;
-    }
 }

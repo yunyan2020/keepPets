@@ -28,9 +28,11 @@ public class Oat extends Food {
     public void updateQuantity(double quantity){
         this.totalQuantity = quantity;
     }
+
     public void minusQuantity(double quantity){
         this.totalQuantity -= quantity;
     }
+
     public int getInitialPrice(){
         return this.initialPrice;
     }

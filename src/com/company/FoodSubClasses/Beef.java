@@ -13,6 +13,7 @@ public class Beef extends Food {
     public int checkBalance(int balance){
         return balance - initialPrice * buyQuantity;
     }
+
     public void printField(){
         super.printField();
         DecimalFormat df = new DecimalFormat("#.00");

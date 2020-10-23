@@ -34,7 +34,4 @@ public class Milk extends Food {
     public int getInitialPrice(){
         return this.initialPrice;
     }
-    public int getBuyQuantity(){
-        return this.buyQuantity;
-    }
 }
